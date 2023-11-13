@@ -1,3 +1,5 @@
+// Comment: Definition of the 'Accounts' class representing user accounts with account type, account number, and account balance.
+
 class Accounts {
   final String accountType;
   final String accountNumber;

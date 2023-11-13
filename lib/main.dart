@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:topcoder_hackathon/screens/login.dart';
 
+// Main entry point for the application.
+// Configures and runs the Flutter app with MaterialApp,
+// setting the theme and initial screen to LoginScreen.
+
 void main() {
   runApp(const MyApp());
 }
 
+String fullName= '';
+String userName= '';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Topcoder Hackathon',
+      title: 'Romex Topcoder Hackathon',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

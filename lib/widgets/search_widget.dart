@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+// Custom search delegate for selecting items from a predefined list
 class SearchWidget extends SearchDelegate<String> {
-  final ValueChanged<String> onLocationSelected;
+  final ValueChanged<String> onItemSelected;
 
-  SearchWidget({required this.onLocationSelected});
+  SearchWidget({required this.onItemSelected});
 
   List<String> searchableItems = [
     'Savings',
@@ -39,7 +40,7 @@ class SearchWidget extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     if (query.isNotEmpty) {
-      onLocationSelected(query);
+      onItemSelected(query);
     }
     return Container();
   }

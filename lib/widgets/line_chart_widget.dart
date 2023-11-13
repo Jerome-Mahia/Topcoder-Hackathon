@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+// Flutter code for a reusable Line Chart widget
 class LineChartWidget extends StatelessWidget {
   const LineChartWidget({super.key, required this.isShowingMainData});
 
@@ -10,7 +11,7 @@ class LineChartWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return LineChart(
       isShowingMainData ? sampleData1 : sampleData2,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
     );
   }
 

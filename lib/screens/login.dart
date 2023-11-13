@@ -1,7 +1,11 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:topcoder_hackathon/screens/dashboard.dart';
+import 'package:topcoder_hackathon/services/login_service.dart';
+import 'package:topcoder_hackathon/widgets/buttons.dart';
 
+// The main login screen widget containing UI elements for user authentication.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -14,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool passwordHidden = true;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool loginLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -91,101 +96,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.008,
+                            height: MediaQuery.of(context).size.height * 0.009,
                           ),
-                          TextFormField(
-                            controller: usernameController,
-                            keyboardType: TextInputType.text,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please provide a valid username';
-                              } else {
-                                return null;
-                              }
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.02),
-                              border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                borderSide: const BorderSide(
-                                  width: 0.9,
-                                ),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                borderSide: BorderSide(
-                                  width: 0.9,
-                                  color: Theme.of(context).colorScheme.tertiary,
-                                ),
-                              ),
-                              hintText: 'Username',
-                              prefixIcon: Icon(
-                                Icons.person,
-                                size: MediaQuery.of(context).size.width * 0.06,
-                              ),
-                            ),
-                          ),
+                          UsernameLoginTextField(context),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
-                          TextFormField(
-                            controller: passwordController,
-                            validator: (value) {
-                              if (value == null || value.length < 6) {
-                                return 'Please provide a valid password of at least 6 characters';
-                              } else {
-                                return null;
-                              }
-                            },
-                            obscureText: passwordHidden,
-                            enableSuggestions: false,
-                            autocorrect: false,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: MediaQuery.of(context).size.height *
-                                      0.02),
-                              border: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                borderSide: const BorderSide(
-                                  width: 0.9,
-                                ),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: const BorderSide(
-                                  width: 0.9,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              hintText: 'Password',
-                              prefixIcon: Icon(
-                                Icons.lock,
-                                size: MediaQuery.of(context).size.width * 0.06,
-                              ),
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    passwordHidden = !passwordHidden;
-                                  });
-                                },
-                                child: Icon(
-                                  passwordHidden
-                                      ? Icons.visibility_off
-                                      : Icons.remove_red_eye,
-                                  size:
-                                      MediaQuery.of(context).size.width * 0.06,
-                                  color: passwordHidden
-                                      ? Colors.grey
-                                      : Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ),
+                          PasswordLoginTextField(context),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.05,
                           ),
@@ -193,68 +110,23 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: InkWell(
                               onTap: () {
                                 if (_loginFormKey.currentState!.validate()) {
-                                  Navigator.pushAndRemoveUntil(
+                                  setState(() {
+                                    loginLoading = true;
+                                  });
+                                  login(
                                     context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const DashboardScreen(),
-                                    ),
-                                    (route) => false,
+                                    usernameController.text,
+                                    passwordController.text,
                                   );
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                        'Login failed. Please try again.',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.error,
-                                      duration: const Duration(seconds: 1),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.02),
-                                        ),
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
-                                  );
+                                  Future.delayed(const Duration(seconds: 1),
+                                      () {
+                                    setState(() {
+                                      loginLoading = false;
+                                    });
+                                  });
                                 }
                               },
-                              child: Container(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.07,
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  border: Border.all(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                  ),
-                                  borderRadius: BorderRadius.circular(
-                                      MediaQuery.of(context).size.height *
-                                          0.02),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'Login',
-                                    style: TextStyle(
-                                      fontSize:
-                                          MediaQuery.of(context).size.width *
-                                              0.049,
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              child: LoginButton(loginLoading: loginLoading),
                             ),
                           ),
                         ],
@@ -274,36 +146,112 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.025,
                     ),
-                    Center(
-                      child: InkWell(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.07,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.secondary,
-                            border: Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                                MediaQuery.of(context).size.height * 0.02),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                fontSize:
-                                    MediaQuery.of(context).size.width * 0.049,
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                    const Center(
+                      child: SignUpButton(),
                     ),
                   ],
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+// Custom TextFormField for the username with specific styling and validation logic
+  TextFormField UsernameLoginTextField(BuildContext context) {
+    return TextFormField(
+      controller: usernameController,
+      keyboardType: TextInputType.text,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please provide a valid username';
+        } else {
+          return null;
+        }
+      },
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.02),
+        border: UnderlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
+          borderSide: const BorderSide(
+            width: 0.9,
+          ),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
+          borderSide: BorderSide(
+            width: 0.9,
+            color: Theme.of(context).colorScheme.tertiary,
+          ),
+        ),
+        hintText: 'Username',
+        hintStyle: TextStyle(
+          fontSize: MediaQuery.of(context).size.width * 0.044,
+        ),
+        prefixIcon: Icon(
+          Icons.person,
+          size: MediaQuery.of(context).size.width * 0.06,
+        ),
+      ),
+    );
+  }
+
+// Custom TextFormField for the password with specific styling and validation logic
+  TextFormField PasswordLoginTextField(BuildContext context) {
+    return TextFormField(
+      controller: passwordController,
+      validator: (value) {
+        if (value == null || value.length < 6) {
+          return 'Please provide a valid password of at least 6 characters';
+        } else {
+          return null;
+        }
+      },
+      obscureText: passwordHidden,
+      enableSuggestions: false,
+      autocorrect: false,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(
+            vertical: MediaQuery.of(context).size.height * 0.02),
+        border: UnderlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
+          borderSide: const BorderSide(
+            width: 0.9,
+          ),
+        ),
+        enabledBorder: UnderlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: const BorderSide(
+            width: 0.9,
+            color: Colors.grey,
+          ),
+        ),
+        hintText: 'Password',
+        hintStyle: TextStyle(
+          fontSize: MediaQuery.of(context).size.width * 0.044,
+        ),
+        prefixIcon: Icon(
+          Icons.lock,
+          size: MediaQuery.of(context).size.width * 0.06,
+        ),
+        suffixIcon: InkWell(
+          onTap: () {
+            setState(() {
+              passwordHidden = !passwordHidden;
+            });
+          },
+          child: Icon(
+            passwordHidden ? Icons.visibility_off : Icons.remove_red_eye,
+            size: MediaQuery.of(context).size.width * 0.06,
+            color: passwordHidden
+                ? Colors.grey
+                : Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
