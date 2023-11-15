@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:topcoder_hackathon/constants/link_constants.dart';
 import 'package:topcoder_hackathon/screens/dashboard.dart';
 
 LoginUser loginUserFromJson(String str) => LoginUser.fromJson(json.decode(str));
@@ -49,8 +50,10 @@ Future<String> retrieveToken() async {
 // This function logs in the user by sending a POST request to the server.
 Future login(BuildContext context, String username, String password) async {
   try {
+    String base = baseUri;
+    String login = loginUri;
     final response = await http.post(
-      Uri.parse("https://server.rebanker.co.ke/api/login-hackathon"),
+      Uri.parse("$base$login"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -67,7 +70,7 @@ Future login(BuildContext context, String username, String password) async {
 
       // Store token in secure storage on successful login
       await tokenStorage.write(key: 'accessToken', value: token);
-      
+
       var fullName = userResult['fullname'];
       var username = userResult['username'];
 

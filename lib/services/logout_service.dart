@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:topcoder_hackathon/constants/link_constants.dart';
 import 'package:topcoder_hackathon/screens/login.dart';
 import 'package:topcoder_hackathon/services/login_service.dart';
 
@@ -35,8 +36,10 @@ class LogoutUser {
 Future logout(BuildContext context) async {
   try {
     final bearertoken = await retrieveToken();
+    String base = baseUri;
+    String logout = logoutUri;
     final response = await http.post(
-      Uri.parse("https://server.rebanker.co.ke/api/logout"),
+      Uri.parse("$base$logout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': bearertoken.toString(),
